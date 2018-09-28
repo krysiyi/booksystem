@@ -1,0 +1,14 @@
+html{height: 100%}
+body{
+	height: 100%;
+	background: url(/images/login.jpg) center top;
+	background-repeat:no-repeat;
+	background-size:100% auto;
+	overflow: hidden;
+}
+.login{
+	width: 26%;
+	border: 1px solid pink;
+	margin: 0 auto;
+	margin-top: 25%;
+}
