@@ -8,7 +8,33 @@ body{
 }
 .login{
 	width: 26%;
-	border: 1px solid pink;
 	margin: 0 auto;
-	margin-top: 25%;
+	margin-top: 20.5%;
+}
+.login form{
+	width: 80%;
+	margin: 0 auto;
+}
+/* .login form .captcha-input{
+	width:20%;
+} */
+.login select{
+	padding: 0;
+	font-size:12px;
+}
+.form-group {
+    margin-bottom: 0 !important;
+    margin-top: 10px;
+}
+.login input{
+	height: 30px;
+}
+.login button{
+	width: 100%;
+}
+.alert-danger{
+	width: 80%;
+	position: fixed;
+	top: 0;
+	left: 10%;
 }

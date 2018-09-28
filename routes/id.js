@@ -13,6 +13,8 @@ router.post('/register',IdService.register);
 router.post('/login',IdService.login);
 //修改
 router.post('/update',IdService.update);
+//查找用户
+router.post('/find',IdService.find);
 //注销
 router.get('/logout',IdService.logout);
 module.exports = router;

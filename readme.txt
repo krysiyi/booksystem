@@ -19,7 +19,7 @@
 
 数据库设计（bookSystem）
 管理员表（manager）
--manager_name 主键
+-name 主键
 -password
 -sex
 -age
@@ -27,7 +27,7 @@
 -reg_time
 
 用户表(user)
--user_name 主键
+-name 主键
 -password
 -sex
 -age

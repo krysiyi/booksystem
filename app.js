@@ -3,6 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var session = require('express-session');
+
 
 var indexRouter = require('./routes/index');
 var idRouter = require('./routes/id');
@@ -19,6 +21,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+//使用中间键
+app.use(session({
+  resave:false,//添加这行
+  saveUninitialized: true,//添加这行
+  secret:"zenghuishigoushi",
+  cookie:{
+    maxAge:60*60*1000
+  }
+}));
 
 app.use('/', indexRouter);
 app.use('/api', idRouter);

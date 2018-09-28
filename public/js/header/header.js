@@ -1,6 +1,7 @@
 function Header(){
 	this.createDom();
 	this.isLogin();
+	this.reg();
 	this.addListener();
 };
 
@@ -38,26 +39,29 @@ $.extend(Header.prototype,{
 	},
 	//判断用户是否登录 改变头部信息
 	isLogin(){
-		/*let loginUser = sessionStorage.loginUser;
+		let loginUser = sessionStorage.loginUser;
 		if(!loginUser)
 			return;
 		loginUser = JSON.parse(loginUser);
 		$(".login-reg-link").addClass("hidden")
 			.siblings(".welcome-logout-link").removeClass("hidden")
-			.find("a:first").text("欢迎：" + loginUser.username);*/
+			.find("a:first").text("欢迎：" + loginUser.name);
+	},//引入注册界面模态框
+	reg(){
+		new Register();
 	},
 	logout(){
-		/*$.get("/api/user/logout",(data)=>{
+		$.get("/api/logout",(data)=>{
 			console.log(data);
 			if(data.res_code===1){
 				sessionStorage.removeItem("loginUser");
 				// 刷新
-				location.reload();
+				window.location.href = "/";
 			}
-		});*/	
+		});	
 	},
 	addListener(){
-		// $(".logout-link").on("click",this.logout);
+		$(".logout-link").on("click",this.logout);
 	}
 });
 
