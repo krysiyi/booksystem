@@ -8,9 +8,54 @@
 </head>
 <body>
 <!--头部引用-->
-	<header>
-		
-	</header>
+	<header></header>
+	<!--content-->
+	<content>
+		<!--列表导航-->
+		<ul class="nav nav-pills nav-stacked" style="width: 200px;float: left;">
+		  <li role="presentation" class="active"><a href="javascript:void(0);">图书详情</a></li>
+		  <li role="presentation"><a href="javascript:void(0);">个人信息</a></li>
+		  <li role="presentation"><a href="javascript:void(0);">修改密码</a></li>
+		</ul>
+		<div class="panel panel-primary" style="margin-left: 220px;min-height: 500px;">
+		  <div class="panel-heading">
+		    <h3 class="panel-title">图书详情</h3>
+		  </div>
+		  <div class="panel-body">
+		    <table class="table table-striped">
+		    	<thead>
+					<tr>
+						<td>封面</td>
+						<td>图书名称</td>
+						<td>图书类型</td>
+						<td>数量</td>
+						<td>价格</td>
+						<td>出版社</td>
+						<td>操作</td>
+						
+					</tr>
+				</thead>
+ 				<tbody>
+ 					<tr>
+						<td>1</td>
+						<td>1</td>
+						<td>1</td>
+						<td>1</td>
+						<td>1</td>
+						<td>1</td>
+						<td class="hide">${curr._id}</td>
+						<td>
+							<a href="javascript:void(0);" title="" class="updatePro" data-toggle="modal" data-target="#updateModal">修改</a>
+							<a href="javascript:void(0);" title="" class="removePro">删除</a>
+						</td>
+					</tr>
+ 				</tbody>
+			</table>
+		  </div>
+		</div>
+
+	</content>
+
 
 	
 </body>
