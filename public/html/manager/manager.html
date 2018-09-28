@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="/libs/bootstrap/css/bootstrap.min.css">
-	<title>首页</title>
+	<title>图书管理</title>
 </head>
 <body>
 <!--头部引用-->
@@ -13,16 +13,32 @@
 	<content>
 		<!--列表导航-->
 		<ul class="nav nav-pills nav-stacked" style="width: 200px;float: left;">
-		  <li role="presentation" class="active"><a href="javascript:void(0);">图书管理</a></li>
-		  <li role="presentation"><a href="javascript:void(0);">用户管理</a></li>
-		  <li role="presentation"><a href="javascript:void(0);">修改密码</a></li>
+		  <li role="presentation" class="active"><a href="javascript:void(0);"><span class="glyphicon glyphicon-book" aria-hidden="true"></span>&nbsp;&nbsp;图书管理</a></li>
+		  <li role="presentation"><a href="javascript:void(0);"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;用户管理</a></li>
+		  <li role="presentation"><a href="javascript:void(0);"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span>&nbsp;&nbsp;修改密码</a></li>
 		</ul>
-		<div class="panel panel-primary" style="margin-left: 220px;min-height: 500px;">
+		<div class="panel panel-primary" style="margin-left: 220px;min-height: 500px;margin-right: 20px;">
 		  <div class="panel-heading">
 		    <h3 class="panel-title">图书管理</h3>
 		  </div>
-		  <div class="panel-body">
-		  	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal" style="float: right;">添加</button>
+		   	<div class="container-fluid" style="height: 50px;margin-top: 20px;">
+		   		<div class="btn-group" style="float: left;">
+				  <button type="button" class="btn btn-primary dropdown-toggle type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">_id<span class="caret"></span></button>
+				  <ul class="dropdown-menu chooseType">
+				    <li><a href="#">_id</a></li>
+				    <li><a href="#">name</a></li>
+				    <li><a href="#">type</a></li>
+				  </ul>
+				</div>
+			    <div class="input-group col-lg-4" style="float: left;">
+			      <input type="text" class="form-control findCondition" placeholder="输入搜索内容">
+			      <span class="input-group-btn">
+			        <button class="btn btn-default find" type="button">搜索</button>
+			      </span>
+			    </div>
+			    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal" style="float: right;">添加</button>
+		  	</div>
+		  	
 		    <table class="table table-striped book-table">
 		    	<thead>
 					<tr>
@@ -38,21 +54,19 @@
 					</tr>
 				</thead>
  				<tbody>
- 					<tr>
- 						<td>1</td>
-						<td>1</td>
-						<td>1</td>
-						<td>1</td>
-						<td>1</td>
-						<td>1</td>
-						<td>1</td>
-						<td>
-							<a href="javascript:void(0);" title="" class="updatePro" data-toggle="modal" data-target="#updateModal">修改</a>
-							<a href="javascript:void(0);" title="" class="removePro">删除</a>
-						</td>
-					</tr>
+
  				</tbody>
+ 				
 			</table>
+			<button type="button" class="btn btn-primary reload" style="margin-top: 15px;">重新加载全部图书信息</button>
+			<!--分页按钮-->
+			
+			<nav aria-label="Page navigation" class="paginationHide">
+				
+				  <ul class="pagination pull-right">
+				    
+				  </ul>
+				</nav>
 		  </div>
 		</div>
 
@@ -63,38 +77,38 @@
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-	        <h4 class="modal-title" id="addBookModalLabel">添加图书</h4>
+	        <h4 class="modal-title" id="addBookModalLabel">添加图书信息</h4>
 	      </div>
 	      <div class="modal-body">
 	      	<div class="alert alert-danger hidden addpos-error">添加失败</div>
 	        <form class="add-book-form">
 	        	<div class="form-group">
-			    <label for="addBookCompany">图书编码</label>
-			    <input type="text" class="form-control" name="company" id="addBookCompany" placeholder="请输入图书编码">
+			    <label for="addBookId">图书编码</label>
+			    <input type="text" class="form-control" name="_id" id="addBookId" placeholder="请输入图书编码">
 			  </div>
 			  <div class="form-group">
 			    <label for="addBookCover">图书封面</label>
-			    <input type="file" class="form-control" name="logo" id="addBookCover">
+			    <input type="file" class="form-control" name="cover" id="addBookCover">
 			  </div>
 			  <div class="form-group">
 			    <label for="addBookName">图书名称</label>
-			    <input type="text" class="form-control" name="company" id="addBookName" placeholder="请输入图书名称">
+			    <input type="text" class="form-control" name="name" id="addBookName" placeholder="请输入图书名称">
 			  </div>
 			  <div class="form-group">
-			    <label for="addPosType">图书类型</label>
-			    <input type="text" class="form-control" name="name" id="addPosType" placeholder="请输入图书类型">
+			    <label for="addBookType">图书类型</label>
+			    <input type="text" class="form-control" name="type" id="addBookType" placeholder="请输入图书类型">
 			  </div>
 			  <div class="form-group">
-			    <label for="addPosNumber">图书数量</label>
-			    <input type="text" class="form-control" name="salary" id="addPosNumber" placeholder="请输入图书数量">
+			    <label for="addBookNumber">图书数量</label>
+			    <input type="text" class="form-control" name="number" id="addBookNumber" placeholder="请输入图书数量">
 			  </div>
 			  <div class="form-group">
-			    <label for="addPosPrice">图书价格</label>
-			    <input type="text" class="form-control" name="address" id="addPosPrice" placeholder="请输入图书价格">
+			    <label for="addBookPrice">图书价格</label>
+			    <input type="text" class="form-control" name="price" id="addBookPrice" placeholder="请输入图书价格">
 			  </div>
 			  <div class="form-group">
-			    <label for="addPosPublish">出版社</label>
-			    <input type="text" class="form-control" name="address" id="addPosPublish" placeholder="请输入出版时间">
+			    <label for="addBookPublish">出版社</label>
+			    <input type="text" class="form-control" name="publish" id="addBookPublish" placeholder="请输入出版社">
 			  </div>
 			</form>
 	      </div>
@@ -105,11 +119,61 @@
 	    </div>
 	  </div>
 	</div>
+	
+	<!-- 修改图书的模态框 -->
+	<div class="modal fade" id="updateModal" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+	        <h4 class="modal-title" id="updateBookModalLabel">修改图书信息</h4>
+	      </div>
+	      <div class="modal-body">
+	      	<div class="alert alert-danger hidden addpos-error">修改失败</div>
+	        <form class="update-book-form">
+	        	<div class="form-group">
+			    <label for="updateBookId">图书编码</label>
+			    <input type="text" class="form-control" name="_id" id="updateBookId" readonly="readonly">
+			  </div>
+			  <div class="form-group">
+			    <label for="updateBookCover">图书封面</label>
+			    <input type="file" class="form-control" name="cover" id="updateBookCover">
+			  </div>
+			  <div class="form-group">
+			    <label for="updateBookName">图书名称</label>
+			    <input type="text" class="form-control" name="name" id="updateBookName" placeholder="请输入图书名称">
+			  </div>
+			  <div class="form-group">
+			    <label for="updateBookType">图书类型</label>
+			    <input type="text" class="form-control" name="type" id="updateBookType" placeholder="请输入图书类型">
+			  </div>
+			  <div class="form-group">
+			    <label for="updateBookNumber">图书数量</label>
+			    <input type="text" class="form-control" name="number" id="updateBookNumber" placeholder="请输入图书数量">
+			  </div>
+			  <div class="form-group">
+			    <label for="updateBookPrice">图书价格</label>
+			    <input type="text" class="form-control" name="price" id="updateBookPrice" placeholder="请输入图书价格">
+			  </div>
+			  <div class="form-group">
+			    <label for="updateBookPublish">出版社</label>
+			    <input type="text" class="form-control" name="publish" id="updateBookPublish" placeholder="请输入出版社">
+			  </div>
+			</form>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	        <button type="button" class="btn btn-primary btn-update-book">确认修改</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 
 	
 </body>
 <script src="/libs/jquery/jquery-1.12.4.min.js" type="text/javascript" ></script>
 <script src="/libs/bootstrap/js/bootstrap.js" type="text/javascript" ></script>
 <script src="/js/header/header.js"></script>
+<script src="/js/manager/manager.js"></script>
 
 </html>

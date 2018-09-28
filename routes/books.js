@@ -16,18 +16,18 @@ var storage = multer.diskStorage({
  
 var upload = multer({ storage: storage })
 
-//发布职位
+//发布图书
 router.post("/publish",upload.single("cover"),BookService.publish);
-//按页查找职位
-/*router.post("/findbypage",PositionService.findByPage);
+//按页查找图书
+router.post("/findbypage",BookService.findByPage);
 //查找总页数
-router.post("/findpage",PositionService.findPage);
-//修改职位
-router.post("/update",upload.single("logo"),PositionService.update);
+router.post("/findpage",BookService.findPage);
 //删除职位
-router.post("/remove",PositionService.remove);
-//按条件查找职位
-router.post("/find",PositionService.find);*/
+router.post("/delete",BookService.remove);
+//修改职位
+router.post("/update",upload.single("cover"),BookService.update);
+//按条件查找图书
+router.post("/find",BookService.find);
 
 
 module.exports = router;
