@@ -66,6 +66,11 @@ const IdService = {
 			});
 		}else if(req.body.book){
 			var {name,book,level} = req.body;
+			//res.json({book});
+			/*console.log(book);
+			if(!book){
+				book="[]";
+			}*/
 			IdDao.update({name},{book},level)
 			.then((data)=>{
 				res.json({res_code:1,res_error:"",res_body:{data:data}});

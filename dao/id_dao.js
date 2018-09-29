@@ -20,6 +20,8 @@ const IdDao = {
 	update(condition,info,level){
 		if(info.book){
 			info.book = JSON.parse(info.book);
+			if(info.book.length===0)
+			return User.update(condition,{book:[]});
 			const index = info.book.length-1;
 			info.book[index].borrow_time = new Date();
 		}

@@ -18,13 +18,14 @@ const BookDao={
 	remove(condition){
 		return Book.remove(condition);
 	},
-	//修改职位信息
+	//修改图书信息
 	update(condition,bookInfo){
 		return Book.update(condition,bookInfo);
 	},
-	//查找职位信息
+	//查找图书信息
 	find(condition){
-		return Book.find( condition);
+		return Book.find(condition);
+		//return condition;
 	}
 }
 

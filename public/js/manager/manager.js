@@ -13,7 +13,7 @@ $.extend(Book.prototype,{
 		//点击翻页处理
 		$(".pagination").on("click",".page",this.loadByPageHandler.bind(this));
 		//添加图书
-		$(".btn-add-book").on("click",this.addBookHandler);
+		$(".btn-add-book").on("click",this.addBookHandler.bind(this));
 		//页面后退
 		$(".pagination").on("click",".previous",this.loadByPrevious.bind(this));
 		//页面前进
@@ -27,7 +27,7 @@ $.extend(Book.prototype,{
 		//点击修改获取当前图书信息
 		$("tbody").on("click",".updateBook",this.nowId);
 		//修改职位
-		$(".btn-update-book").on("click",this.updateBookHandler);
+		$(".btn-update-book").on("click",this.updateBookHandler.bind(this));
 		//搜索类型
 		$(".chooseType").on("click","a",this.chooseType);
 		//搜索
@@ -36,12 +36,17 @@ $.extend(Book.prototype,{
 		$(".reload").on("click",this.init.bind(this));
 		//内容切换
 		$(".change-content").on("click","li",this.changeContent.bind(this));
-		//修改密码按钮
-		$(".password-btn").on("click",this.changePassword);
+		
 		//查看借书详情
 		$(".user-table").on("click",".seemore",this.bookDetails.bind(this));
 		//增加管理员
 		$(".btn-add-manager").on("click",this.addManager);
+		//获取当前管理员信息
+		$("tbody").on("click",".updateManager",this.nowManager);
+		//更新管理员信息
+		$(".update-btn").on("click",this.updateManager.bind(this));
+		//修改密码按钮
+		$(".password-btn").on("click",this.changePassword);
 	},
 	addManager(){
 		$("#addmanagerModal").modal("hide");
@@ -52,14 +57,16 @@ $.extend(Book.prototype,{
 			//console.log(data);
 			// 处理响应数据
 			if (data.res_code === 1) { // 注册管理员成功
-				$(".addmanager-success").removeClass("hidden");
+				$(".update-success").html('注册管理员成功');
+				$(".update-success").removeClass("hidden");
 				setTimeout(()=>{
-					$(".addmanager-success").addClass("hidden");
+					$(".update-success").addClass("hidden");
 				},1500);
 			} else { // 注册失败
-				$(".addmanager-error").removeClass("hidden");
+				$(".update-error").html('注册管理员失败');
+				$(".update-error").removeClass("hidden");
 				setTimeout(()=>{
-					$(".addmanager-error").addClass("hidden");
+					$(".update-error").addClass("hidden");
 				},1500);
 			}
 		});
@@ -98,22 +105,43 @@ $.extend(Book.prototype,{
 	},
 	//修改密码操作
 	changePassword(){
-		const name = JSON.parse(sessionStorage.loginUser).name;
-		const data = $(".password-form").serialize()+"&level=1&name="+name;
-		//console.log(data);
-		const url="/api/update/";
-		$.post(url,data,(data)=>{
-			if(data.res_code===1){
-				alert("成功")
-			}else{
-				alert("失败")
-				/*$(".password-error").removeClass("hidden");
-				// 修改失败
-				setTimeout(()=>{
-					$(".password-error").addClass("hidden");
-				},1500);*/
-			}			
-		});
+		//获取两次输入的密码，判断是否一致
+		var newPwd=$("#newPwd").val();
+		if($("#againNewPwd").val()===newPwd){
+			const name = JSON.parse(sessionStorage.loginUser).name;
+			const data = $(".password-form").serialize()+"&level=1&name="+name;
+			//console.log(data);
+			const url="/api/update/";
+			$.post(url,data,(data)=>{
+				if(data.res_code===1){
+					// 修改成功
+					$(".update-success").html("修改密码成功,请重新登录");
+					$(".update-success").removeClass("hidden");
+					setTimeout(()=>{
+						$.get("/api/logout",(data)=>{
+							if(data.res_code===1){
+								sessionStorage.removeItem("loginUser");
+								// 刷新
+								window.location.href = "/";
+							}
+						});
+					},1500);
+				}else{
+					$(".update-error").html("原密码错误，请重新尝试");
+					$(".update-error").removeClass("hidden");
+					setTimeout(()=>{
+						$(".update-error").addClass("hidden");
+					},1500);
+				}	
+			});
+		}else{
+			$(".update-error").html('两次密码输入不一致');
+			$(".update-error").removeClass("hidden");
+			setTimeout(()=>{
+				$(".update-error").addClass("hidden");
+			},1500);
+		}
+		
 	},
 	//当前搜索类型
 	chooseType(){
@@ -174,6 +202,7 @@ $.extend(Book.prototype,{
 		//加载页面
 		//console.log(this.tab);
 		if(this.tab === 0){
+			//获取图书信息
 			$.post("/api/book/findbypage",{page},(data)=>{
 			//console.log(data);
 			var html="";
@@ -197,8 +226,9 @@ $.extend(Book.prototype,{
 				});
 			});
 		}else if(this.tab===1){
+			//获取普通用户信息
 			$.post("/api/find",{page},(data)=>{
-			//console.log(data);
+			console.log(data);
 			var html="";
 			data.res_body.forEach((curr,index)=>{
 					html+=`<tr>
@@ -210,15 +240,33 @@ $.extend(Book.prototype,{
 							<td>
 							<button type="button" class="btn btn-primary seemore" data-toggle="modal" data-target="#userdetailModal">查看详情</button>
 							</td>
-							<td>
-								<a href="javascript:void(0);" title="" class="updateBook" data-toggle="modal" data-target="#updateModal"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
-								<a href="javascript:void(0);" title="" class="removeBook"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
-							</td>
 						</tr>
 					`;
 					$(".user-table tbody").html(html);
 					$(".paginationHide").removeClass("hide");
 				});
+			});
+		}else if(this.tab===2){
+			//获取管理员信息
+			var name=JSON.parse(sessionStorage.loginUser).name;
+			$.post("/api/find",{name,level:1},(data)=>{
+				//console.log(data);
+				var html="";
+				html+=`<tr>
+						<td class="username">${data.res_body.data[0].name}</td>
+						<td>${data.res_body.data[0].sex}</td>
+						<td>${data.res_body.data[0].age}</td>
+						<td>${data.res_body.data[0].tel}</td>
+						<td>${data.res_body.data[0].reg_time}</td>
+						<td>
+							<a href="javascript:void(0);" title="" class="updateManager" data-toggle="modal" data-target="#updateManagerModal"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+						</td>
+					</tr>
+				`;
+				$(".manager-table tbody").html(html);
+				$(".paginationHide").removeClass("hide");
+				
+				
 			});
 		}
 		
@@ -253,6 +301,7 @@ $.extend(Book.prototype,{
 	addBookHandler(){
 		let formData=new FormData($(".add-book-form")[0]);
 		let url ="/api/book/publish";
+		var _this=this;
 		$.ajax({
 			type:"post",
 			url,
@@ -263,11 +312,25 @@ $.extend(Book.prototype,{
 			success(data){
 				// 关闭模态框
 				$("#addModal").modal("hide");
-				window.location.reload();
+				if(data.res_code===1){
+					_this.loadByPage();
+					_this.loadPage();
+					$(".update-success").html('添加图书成功');
+					$(".update-success").removeClass("hidden");
+					setTimeout(()=>{
+						$(".update-success").addClass("hidden");
+					},1500);
+				}else{
+					$(".update-error").html('添加图书失败');
+					$(".update-error").removeClass("hidden");
+					setTimeout(()=>{
+						$(".update-error").addClass("hidden");
+					},1500);
+				}
 			}
 		});
 	},
-	//删除职位
+	//删除图书
 	removeBookHandler(e){
 		var _id=$(e).parent().parent().siblings(".id").html();
 		console.log(_id);
@@ -275,11 +338,21 @@ $.extend(Book.prototype,{
 		$.post(url,{_id},(data)=>{
 			console.log(data);
 			if(data.res_code==1){
-				alert("删除成功");
-				window.location.reload();
+				this.loadByPage();
+				this.loadPage();
+				$(".update-success").html('删除图书成功');
+					$(".update-success").removeClass("hidden");
+					setTimeout(()=>{
+						$(".update-success").addClass("hidden");
+					},1500);
 			}else{
-				alert("删除失败");
+				$(".update-error").html('删除图书失败');
+					$(".update-error").removeClass("hidden");
+					setTimeout(()=>{
+						$(".update-error").addClass("hidden");
+					},1500);
 			}
+			
 		});
 	},
 	//获取当前点击图书id
@@ -287,10 +360,19 @@ $.extend(Book.prototype,{
 		var _id=$(this).parent().siblings(".id").html();
 		$(".update-book-form #updateBookId").val(_id);
 	},
-	//修改职位
+	//获取当前点击管理员用户名
+	nowManager(){
+		console.log($(this).parent().parent().children("td:eq(0)").html());
+		$(".update-form #nowManagerName").val($(this).parent().parent().children("td:eq(0)").html());
+		$(".update-form #nowManagerSex").val($(this).parent().parent().children("td:eq(1)").html());
+		$(".update-form #nowManagerAge").val($(this).parent().parent().children("td:eq(2)").html());
+		$(".update-form #nowManagerTel").val($(this).parent().parent().children("td:eq(3)").html());
+	},
+	//修改图书
 	updateBookHandler(){
 		let formData=new FormData($(".update-book-form")[0]);
 		let url ="/api/book/update";
+		var _this=this;
 		$.ajax({
 			type:"post",
 			url,
@@ -300,8 +382,22 @@ $.extend(Book.prototype,{
 			contentType:false,
 			success(data){
 				// 关闭模态框
+				if(data.res_code===1){
+					_this.loadPage();
+					_this.loadByPage();
+					$(".update-success").html('修改图书成功');
+					$(".update-success").removeClass("hidden");
+					setTimeout(()=>{
+						$(".update-success").addClass("hidden");
+					},1500);
+				}else{
+					$(".update-error").html('修改图书失败');
+					$(".update-error").removeClass("hidden");
+					setTimeout(()=>{
+						$(".update-error").addClass("hidden");
+					},1500);
+				}
 				$("#updateModal").modal("hide");
-				window.location.reload();
 			}
 		});
 	},
@@ -319,7 +415,7 @@ $.extend(Book.prototype,{
 		//console.log(obj);
 		let url ="/api/book/find";
 		$.post(url,obj,(data)=>{
-			//console.log(data);
+			console.log(data);
 			//获取查询后的数据渲染页面
 			if(data.res_body.data.length){
 				var html="";
@@ -342,7 +438,11 @@ $.extend(Book.prototype,{
 					$(".paginationHide").addClass("hide");
 				});
 			}else{
-				alert("搜索不存在");
+				$(".update-error").html('没有查询的图书');
+					$(".update-error").removeClass("hidden");
+					setTimeout(()=>{
+						$(".update-error").addClass("hidden");
+					},1500);
 			}
 		});
 	},
@@ -355,9 +455,36 @@ $.extend(Book.prototype,{
 		this.tab = index;
 		if(index==0) $(".book_manage").css("display","block").siblings("div").css("display","none");
 		else if(index==1) $(".message_manage").css("display","block").siblings("div").css("display","none");
+		else if(index==2) $(".person_manage").css("display","block").siblings("div").css("display","none");
 		else $(".pwd_manage").css("display","block").siblings("div").css("display","none");
 		this.loadByPage(1);
 		this.loadPage();
+	},
+	//修改管理员信息
+	updateManager(){
+		$("#updateManagerModal").modal("hide");
+		const data = $(".update-form").serialize()+"&level=1";
+		//console.log(data);
+		const url="/api/update";
+		$.post(url,data,(data)=>{
+			//修改成功，查询渲染页面
+			// 处理响应数据
+			if (data.res_code === 1) { // 修改管理员成功
+				this.loadPage();
+				this.loadByPage();
+				$(".update-success").html('修改管理员信息成功');
+					$(".update-success").removeClass("hidden");
+					setTimeout(()=>{
+						$(".update-success").addClass("hidden");
+					},1500);
+			} else { // 注册失败
+				$(".update-success").html('修改管理员信息成功失败');
+					$(".update-success").removeClass("hidden");
+					setTimeout(()=>{
+						$(".update-success").addClass("hidden");
+					},1500);
+			}
+		});
 	}
 });
 

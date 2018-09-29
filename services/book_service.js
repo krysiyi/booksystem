@@ -71,21 +71,25 @@ const BookService = {
 	},
 	// 按条件查找图书
 	find(req, res, next) {
-		// 获取查询的页码
-		const {type,info} = req.body;
-		// 查询条件 模糊查询
-		var obj={}
-		obj[type]=new RegExp(info);
-		//console.log(query);
+		if({_id}=req.body){
+			var obj={_id};
+		}else{
+			// 获取查询的页码
+			const {type,info} = req.body;
+			// 查询条件 模糊查询
+			var obj={}
+			obj[type]=new RegExp(info,"i");
+			//console.log(query);
+		}
 		BookDao.find(obj)
-				.then((data)=>{
-					console.log(data);
-					res.json({res_code:1, res_error:"", res_body:{data}});
-				})
-				.catch((err)=>{
-					res.json({res_code:1, res_error:err, res_body:{}});
-				});
+					.then((data)=>{
+						console.log(data);
+						res.json({res_code:1, res_error:"", res_body:{data}});
+					})
+					.catch((err)=>{
+						res.json({res_code:1, res_error:err, res_body:{}});
+					});
+		}
 	}
-}
 
 module.exports = BookService;

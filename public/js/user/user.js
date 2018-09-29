@@ -98,28 +98,34 @@ $.extend(User.prototype,{
 					if(book[index].id === bookid){
 						book.splice(index,1);
 						book = JSON.stringify(book);
+						//console.log(book);
 						$.post("/api/update",{name:username,book:book,level:0},(data)=>{
-						//console.log(data);
+							
+						console.log(data);
 							if(data.res_code===1){
 								$.post("/api/book/find",{_id:bookid},(data)=>{
-									//var number = data.res_body.data[0].number;
 									console.log(data);
-								});
+									var number = ++data.res_body.data[0].number;
+									$.post("/api/book/update",{_id:bookid,number},(data)=>{
+										if(data.res_code===1){
+											//归还成功
+											this.borrowDtails()
+											$(".update-success").html("归还图书成功");
+											$(".update-success").removeClass("hidden");
+											setTimeout(()=>{
+												$(".update-error").addClass("hidden");
+											},1500);
+										}else{
+											//还书失败
+											$(".update-error").html("归还图书失败");
+											$(".update-error").removeClass("hidden");
+											setTimeout(()=>{
+												$(".update-error").addClass("hidden");
+											},1500);
+										}
+									})
 
-
-
-
-
-
-
-
-								//归还成功
-								this.borrowDtails()
-								$(".update-success").html("归还图书成功");
-									$(".update-success").removeClass("hidden");
-									setTimeout(()=>{
-										$(".update-error").addClass("hidden");
-									},1500);
+								});	
 							}else{
 								//还书失败
 								$(".update-error").html("归还图书失败");
@@ -150,6 +156,8 @@ $.extend(User.prototype,{
 			$(".update-form").find("input")[3].value = loginUser.tel;
 	},
 	xxk(e){
+		this.loadPage();
+		this.loadByPage();
 		const src = $(e.target).parent(); 
 		src.addClass("active").siblings().removeClass("active");
 		const index = src.index();
@@ -336,6 +344,7 @@ $.extend(User.prototype,{
 		
 		//获取当前图书编码
 		var _id=$(this).parent().siblings(".id").html();
+		const _this = this;
 		var bookname=$(this).parent().siblings(".bookname").html();
 		//获取当前图书数量
 		var number=$(this).parent().siblings(".number").html();
@@ -370,6 +379,7 @@ $.extend(User.prototype,{
 						},1500);
 							return ;
 					}
+					
 				}
 				book.push({
 					id:_id,
@@ -384,6 +394,7 @@ $.extend(User.prototype,{
 						let url ="/api/book/update";
 						$.post(url,{_id,number},function(data){
 							if(data.res_code===1){
+								$(_this).parent().siblings(".number").html(number);
 								 sessionStorage.loginUser.book = JSON.parse(book);
 								// console.log(book);
 								 $(".update-success").html("借阅图书成功");
