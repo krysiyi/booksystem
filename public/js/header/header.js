@@ -1,7 +1,6 @@
 function Header(){
 	this.createDom();
 	this.isLogin();
-	this.reg();
 	this.addListener();
 };
 
@@ -46,9 +45,6 @@ $.extend(Header.prototype,{
 		$(".login-reg-link").addClass("hidden")
 			.siblings(".welcome-logout-link").removeClass("hidden")
 			.find("a:first").text("欢迎：" + loginUser.name);
-	},//引入注册界面模态框
-	reg(){
-		new Register();
 	},
 	logout(){
 		$.get("/api/logout",(data)=>{

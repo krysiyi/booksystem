@@ -33,6 +33,8 @@ $.extend(Book.prototype,{
 		$(".find").on("click",this.findBook);
 		//重新加载全部图书信息
 		$(".reload").on("click",this.init.bind(this));
+		//内容切换
+		$(".change-content").on("click","li",this.changeContent);
 	},
 	//当前搜索类型
 	chooseType(){
@@ -205,10 +207,16 @@ $.extend(Book.prototype,{
 			}else{
 				alert("搜索不存在");
 			}
-
 		});
+	},
+	//切换内容刷新（选项卡）
+	changeContent(){
+		$(this).addClass("active").siblings().removeClass("active");
+		var index=$(this).index();
+		if(index==0) $(".book_manage").css("display","block").siblings("div").css("display","none");
+		else if(index==1) $(".message_manage").css("display","block").siblings("div").css("display","none");
+		else $(".pwd_manage").css("display","block").siblings("div").css("display","none");
 	}
-	
 });
 
 new Book();

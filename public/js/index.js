@@ -1,6 +1,7 @@
 function Index(){
 	this.addListener();
 	this.load();
+	this.reg();
 };
 
 $.extend(Index.prototype,{
@@ -18,6 +19,9 @@ $.extend(Index.prototype,{
 		$.post(url,data,(data)=>{
 			if(data.res_code===0){
 				$(".login-error").removeClass("hidden");
+				setTimeout(()=>{
+					$(".login-error").addClass("hidden");
+				},1500);
 			}else{
 				sessionStorage.loginUser = JSON.stringify(data.res_body.data);
 				if(level==0)
@@ -27,6 +31,9 @@ $.extend(Index.prototype,{
 				//console.log(sessionStorage.loginUser);
 			}
 		});
+	},
+	reg(){
+		new Register;
 	},
 	//载入验证码
 	load(){

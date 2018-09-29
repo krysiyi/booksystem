@@ -7,6 +7,7 @@ body{
 	overflow: hidden;
 }
 .login{
+	position: relative;
 	width: 26%;
 	margin: 0 auto;
 	margin-top: 20.5%;
@@ -37,4 +38,10 @@ body{
 	position: fixed;
 	top: 0;
 	left: 10%;
+}
+.register{
+position: absolute;
+top:-14%;
+left: 53%;
+color:white;
 }

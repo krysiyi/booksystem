@@ -83,7 +83,7 @@ $.extend(Register.prototype,{
 				// 将注册成功的用户信息保存到 sessionStorage 中
 				sessionStorage.loginUser = JSON.stringify(data.res_body.data);
 				// 刷新页面
-				window.location.reload();
+				window.location.href = "/html/user/user.html";
 			} else { // 注册失败
 				$(".register-error").removeClass("hidden");
 			}
