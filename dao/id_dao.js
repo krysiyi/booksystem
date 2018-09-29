@@ -8,8 +8,7 @@ const IdDao = {
 			return new User(info).save();
 		}else{//管理员账号注册
 			return new Manager(info).save();//存入集合操作
-		}
-		
+		}	
 	},
 	login(condition,level){
 		if(level==0){//判断是否为普通用户登录
@@ -27,13 +26,21 @@ const IdDao = {
 	},
 	find(condition,level){
 		if(level==0){//判断是否为普通用户注册
-			return User.find(condition);
+			if(condition.name ==="kry"){
+				return User.find();
+			}else{
+				return User.find(condition);
+			}
 		}else{//管理员账号注册
 			return Manager.find(condition);//存入集合操作
 		}
 	},
 	logout(){
 
+	},
+	findpage(page){
+		const pageCount = 3;
+		return User.find().skip((page-1)*pageCount).limit(pageCount);
 	}
 };
 

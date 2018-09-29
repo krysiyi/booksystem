@@ -24,11 +24,11 @@
 		  	</div>
 		   	<div class="container-fluid" style="height: 50px;margin-top: 20px;">
 		   		<div class="btn-group" style="float: left;">
-					<button type="button" class="btn btn-primary dropdown-toggle type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">_id<span class="caret"></span></button>
+					<button type="button" class="btn btn-primary dropdown-toggle thistype" data-toggle="dropdown" what:"_id" aria-haspopup="true" aria-expanded="false">图书编号<span class="caret"></span></button>
 					<ul class="dropdown-menu chooseType">
-						<li><a href="#">_id</a></li>
-					    <li><a href="#">name</a></li>
-					    <li><a href="#">type</a></li>
+						<li><a class="_id" href="#">图书编号</a></li>
+					    <li><a class="name" href="#">图书名称</a></li>
+					    <li><a class="type" href="#">图书类型</a></li>
 					</ul>
 				</div>
 				<div class="input-group col-lg-4" style="float: left;">
@@ -43,7 +43,7 @@
 		  	<table class="table table-striped book-table">
 		    	<thead>
 					<tr>
-						<td>图书编码</td>
+						<td>图书编号</td>
 						<td>封面</td>
 						<td>图书名称</td>
 						<td>图书类型</td>
@@ -56,8 +56,8 @@
  				<tbody></tbody>
  			</table>
 			<!--分页按钮-->
-				<nav aria-label="Page navigation" class="paginationHide">
-					<ul class="pagination pull-right">
+				<nav aria-label="Page navigation" class="paginationHide" style="position: absolute;bottom:10%;right: 5%;">
+					<ul class="pagination">
 					 </ul>
 				</nav>
 			</div>
@@ -68,27 +68,48 @@
 			<div class="panel-heading">
 		    	<h3 class="panel-title">用户信息管理</h3>
 		  	</div>
-		</div>
+		  	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addmanagerModal" style="float: right;margin: 10px 0;margin-right: 10px">添加新管理员</button>
+
+				<table class="table table-striped user-table">
+		    	<thead>
+					<tr>
+						<td>用户名</td>
+						<td>性别</td>
+						<td>年龄</td>
+						<td>电话</td>
+						<td>注册时间</td>
+						<td>借书信息</td>
+						<td>操作</td>
+					</tr>
+				</thead>
+ 				<tbody></tbody>
+ 			</table>
+			<!--分页按钮-->
+				<nav aria-label="Page navigation" class="paginationHide" style="position: absolute;bottom:10%;right: 5%;">
+					<ul class="pagination new-pagination">
+					 </ul>
+				</nav>
+			</div>
 		<!--密码信息管理-->
 		<div class="panel panel-primary pwd_manage" style="left: 220px;min-height: 500px;right: 20px;position: absolute;display: none;">
 			<div class="panel-heading">
 			    <h3 class="panel-title">修改密码</h3>
 			</div>
 			<div class="panel-body">
-			    <form style="width: 500px;margin: 50px auto;padding: 50px;border: 2px solid #337AB7;border-radius: 10px;">
+			    <form class="password-form" style="width: 500px;margin: 50px auto;padding: 50px;border: 2px solid #337AB7;border-radius: 10px;">
 				  <div class="form-group">
 				    <label for="oldPwd">旧密码</label>
-				    <input type="password" class="form-control" id="oldPwd" placeholder="请输入原来密码">
+				    <input type="password" class="form-control" name="oldPwd" placeholder="请输入原来密码">
 				  </div>
 				  <div class="form-group">
 				    <label for="newPwd">新密码</label>
-				    <input type="password" class="form-control" id="newPwd" placeholder="请输入新密码">
+				    <input type="password" class="form-control" name="newPwd" placeholder="请输入新密码">
 				  </div>
 				  <div class="form-group">
 				    <label for="againNewPwd">再次输入新密码</label>
 				    <input type="password" class="form-control" id="againNewPwd" placeholder="请再次输入新密码">
 				  </div>
-				  <button type="submit" class="btn btn-primary">确认修改</button>
+				  <button type="button" class="btn btn-primary password-btn">确认修改</button>
 				</form>
 			</div>
 		</div>	
@@ -191,7 +212,69 @@
 	  </div>
 	</div>
 
-	
+	<!-- 添加管理员的模态框 -->
+	<div class="modal fade" id="addmanagerModal" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+	        <h4 class="modal-title" id="addBookModalLabel">添加管理员账号</h4>
+	      </div>
+	      <div class="modal-body">
+	      	<div class="alert alert-danger hidden addmanager-error">添加失败</div>
+	        <form class="add-book-form">
+	        	<div class="form-group">
+			    <label >管理账号</label>
+			    <input type="text" class="form-control" name="_id" placeholder="请输入账号名">
+			  </div>
+			  <div class="form-group">
+			    <label >密码</label>
+			    <input type="text" class="form-control" name="_id" placeholder="请输入密码">
+			  </div>
+			  <div class="form-group">
+			    <label>性别</label>
+			    <input type="text" class="form-control" name="name" placeholder="请输入性别">
+			  </div>
+			  <div class="form-group">
+			    <label>年龄</label>
+			    <input type="text" class="form-control" name="type" placeholder="请输入年龄">
+			  </div>
+			  <div class="form-group">
+			    <label>电话</label>
+			    <input type="text" class="form-control" name="number" placeholder="请输入电话">
+			  </div>
+			</form>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	        <button type="button" class="btn btn-primary btn-add-manager">添加</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<!-- 添加管理员的模态框 -->
+	<div class="modal fade" id="userdetailModal" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+	        <h4 class="modal-title" id="addBookModalLabel">用户借书详情</h4>
+	      </div>
+		      <table class="table table-striped details-table">
+			    	<thead>
+						<tr>
+							<td>图书编号</td>
+							<td>图书名</td>
+							<td>借阅时间</td>
+						</tr>
+					</thead>
+	 				<tbody></tbody>
+	 			</table>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
 </body>
 <script src="/libs/jquery/jquery-1.12.4.min.js" type="text/javascript" ></script>
 <script src="/libs/bootstrap/js/bootstrap.js" type="text/javascript" ></script>

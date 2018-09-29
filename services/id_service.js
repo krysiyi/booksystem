@@ -37,25 +37,68 @@ const IdService = {
 		});
 	},
 	update(req,res,next){
-		var {name,age,sex,tel,level} = req.body;
-		IdDao.update({name},{age,sex,tel},level)
-		.then((data)=>{
-			res.json({res_code:1,res_error:"",res_body:{data:data}});
-		})
-		.catch((err)=>{
-			res.json({res_code: 0, res_error: err, res_body: {}});
-		});
-
+		if(req.body.oldPwd){
+			var {name,level,oldPwd,newPwd} = req.body;
+			IdDao.login({name},level)
+			.then((data)=>{
+				if(data.length!=0){
+					const user = data[0];
+					if(bcrypt.compareSync(oldPwd, user.password)){
+					// 将用户信息保存到 session 中
+					//req.session.loginUser = data;
+					const hash = bcrypt.hashSync(newPwd, 10);
+					IdDao.update({name},{password:hash},level)
+					.then((data)=>{
+							res.json({res_code:1,res_error:"",res_body:{data:data}});
+						})
+						.catch((err)=>{
+							res.json({res_code: 0, res_error: err, res_body: {}});
+						});
+					}else{
+						res.json({res_code:0,res_error:"err",res_body:{}});
+					}				
+				}else{
+					res.json({res_code:0,res_error:"err",res_body:{}});
+				}
+			})
+			.catch((err)=>{
+				res.json({res_code: 0, res_error: err, res_body: {}});
+			});
+		}else{
+			var {name,age,sex,tel,level} = req.body;
+			IdDao.update({name},{age,sex,tel},level)
+			.then((data)=>{
+				res.json({res_code:1,res_error:"",res_body:{data:data}});
+			})
+			.catch((err)=>{
+				res.json({res_code: 0, res_error: err, res_body: {}});
+			});
+		}
 	},
 	find(req,res,next){
-		var {name,level} = req.body;
-		IdDao.find({name},level)
-		.then((data)=>{
-			res.json({res_code:1,res_error:"",res_body:{data:data}});
-		})
-		.catch((err)=>{
-			res.json({res_code: 0, res_error: err, res_body: {}});
-		});
+		if(req.body.page){
+			const {page} = req.body;
+			IdDao.findpage(page)
+			.then((data)=>{
+				res.json({res_code:1,res_error:"",res_body:data});
+			})
+			.catch((err)=>{
+				res.json({res_code:0,res_error:err,res_body:{}});
+			}); 
+		}else{
+			var {name,level} = req.body;
+			/*if(name){
+				var name = "kry";
+				res.json({name});
+			}*/
+			IdDao.find({name},level)
+			.then((data)=>{
+				res.json({res_code:1,res_error:"",res_body:{data:data}});
+			})
+			.catch((err)=>{
+				res.json({res_code: 0, res_error: err, res_body: {}});
+			});	
+		}	
 	},
 	logout(req,res,next){
 		//req.session.loginUser = null;
