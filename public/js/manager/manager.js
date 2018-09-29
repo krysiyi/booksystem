@@ -40,7 +40,30 @@ $.extend(Book.prototype,{
 		$(".password-btn").on("click",this.changePassword);
 		//查看借书详情
 		$(".user-table").on("click",".seemore",this.bookDetails.bind(this));
+		//增加管理员
+		$(".btn-add-manager").on("click",this.addManager);
 	},
+	addManager(){
+		$("#addmanagerModal").modal("hide");
+		const data = $(".add-manager-form").serialize()+"&level=1";
+		//console.log(data);
+		const url="/api/register";
+		$.post(url,data,(data)=>{
+			//console.log(data);
+			// 处理响应数据
+			if (data.res_code === 1) { // 注册管理员成功
+				$(".addmanager-success").removeClass("hidden");
+				setTimeout(()=>{
+					$(".addmanager-success").addClass("hidden");
+				},1500);
+			} else { // 注册失败
+				$(".addmanager-error").removeClass("hidden");
+				setTimeout(()=>{
+					$(".addmanager-error").addClass("hidden");
+				},1500);
+			}
+		});
+	},	
 	bookDetails(e){
 		const src = e.target;
 		const name = $(src).parent().siblings(".username").html();

@@ -68,6 +68,8 @@
 			<div class="panel-heading">
 		    	<h3 class="panel-title">用户信息管理</h3>
 		  	</div>
+		  	<div class="alert alert-danger hidden addmanager-error">添加管理员失败</div>
+		  	<div class="alert alert-success hidden addmanager-success">添加管理员成功</div>
 		  	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addmanagerModal" style="float: right;margin: 10px 0;margin-right: 10px">添加新管理员</button>
 
 				<table class="table table-striped user-table">
@@ -222,26 +224,26 @@
 	      </div>
 	      <div class="modal-body">
 	      	<div class="alert alert-danger hidden addmanager-error">添加失败</div>
-	        <form class="add-book-form">
+	        <form class="add-manager-form">
 	        	<div class="form-group">
 			    <label >管理账号</label>
-			    <input type="text" class="form-control" name="_id" placeholder="请输入账号名">
+			    <input type="text" class="form-control" name="name" placeholder="请输入账号名">
 			  </div>
 			  <div class="form-group">
 			    <label >密码</label>
-			    <input type="text" class="form-control" name="_id" placeholder="请输入密码">
+			    <input type="password" class="form-control" name="password" placeholder="请输入密码">
 			  </div>
 			  <div class="form-group">
 			    <label>性别</label>
-			    <input type="text" class="form-control" name="name" placeholder="请输入性别">
+			    <input type="text" class="form-control" name="sex" placeholder="请输入性别">
 			  </div>
 			  <div class="form-group">
 			    <label>年龄</label>
-			    <input type="text" class="form-control" name="type" placeholder="请输入年龄">
+			    <input type="text" class="form-control" name="age" placeholder="请输入年龄">
 			  </div>
 			  <div class="form-group">
 			    <label>电话</label>
-			    <input type="text" class="form-control" name="number" placeholder="请输入电话">
+			    <input type="text" class="form-control" name="tel" placeholder="请输入电话">
 			  </div>
 			</form>
 	      </div>

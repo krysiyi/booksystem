@@ -118,11 +118,30 @@
 		</div>
 
 		<div class="panel panel-primary box hidden" style="margin-left: 220px;min-height: 500px;">
-		  <div class="panel-heading">
-			  <h3 class="panel-title">修改密码</h3>
-			</div>
-			<div class="panel-body">
-			 
+			  <div class="panel-heading">
+				  <h3 class="panel-title">修改密码</h3>
+				</div>
+				<div class="panel-body">
+				 <div class="panel-heading">
+				    <h3 class="panel-title">修改密码</h3>
+				</div>
+				<div class="panel-body">
+				    <form class="password-form" style="width: 500px;margin: 50px auto;padding: 50px;border: 2px solid #337AB7;border-radius: 10px;">
+					  <div class="form-group">
+					    <label for="oldPwd">旧密码</label>
+					    <input type="password" class="form-control" name="oldPwd" placeholder="请输入原来密码">
+					  </div>
+					  <div class="form-group">
+					    <label for="newPwd">新密码</label>
+					    <input type="password" class="form-control" name="newPwd" placeholder="请输入新密码">
+					  </div>
+					  <div class="form-group">
+					    <label for="againNewPwd">再次输入新密码</label>
+					    <input type="password" class="form-control" id="againNewPwd" placeholder="请再次输入新密码">
+					  </div>
+					  <button type="button" class="btn btn-primary password-btn">确认修改</button>
+					</form>
+				</div>
 			</div>
 		</div>
 		

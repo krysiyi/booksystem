@@ -9,7 +9,7 @@ $.extend(Index.prototype,{
 		$(".login-btn").attr("disabled","disabled");
 		$(".login-btn").on("click",this.login);
 		//点击验证码刷新验证码	
-		$(".captcha").on("click",this.load);
+		$(".recaptcha").on("click",this.load);
 		//失去焦点验证是否正确
 		$(".captcha-input").on("blur",this.verify);
 	},
