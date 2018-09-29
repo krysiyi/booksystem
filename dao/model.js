@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
 	tel:Number,
 	sex:String,
 	age:Number,
-	book:Object,
+	book:Array,
 	reg_time:Date
 });
 

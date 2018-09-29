@@ -61,21 +61,10 @@ $.extend(User.prototype,{
 		});
 	},
 	addListener(){
-		$(".tab").on("click",function(){
-			$(this).addClass("active").siblings().removeClass("active");
-			const index = $(this).index();
-			//console.log(index);
-			$(".box").eq(index).removeClass("hidden").siblings(".panel").addClass("hidden");
-
-		});
-		$(".updatePro").on("click",function(){
-			let loginUser = JSON.parse(sessionStorage.loginUser);
-			//console.log(loginUser);
-			$(".update-form").find("input")[0].value = loginUser.name;
-			$(".update-form").find("input")[1].value = loginUser.sex;
-			$(".update-form").find("input")[2].value = loginUser.age;
-			$(".update-form").find("input")[3].value = loginUser.tel;
-		});
+		//选项卡点击
+		$(".tab").on("click",this.xxk.bind(this));
+		//更新用户信息自动填充
+		$(".updatePro").on("click",this.autoInput);
 		//更新按钮
 		$(".update-btn").on("click",this.update.bind(this));
 		//点击翻页处理
@@ -92,6 +81,129 @@ $.extend(User.prototype,{
 		$(".reload").on("click",this.init.bind(this));
 		//借阅图书相关事件
 		$(".book-table tbody").on("click",".borrow",this.borrowBook);
+		//修改密码
+		$(".password-btn").on("click",this.changePassword);
+		//还书按钮
+		$(".table-borrowBook").on("click",".returnBook",this.returnBook.bind(this));
+	},
+	returnBook(e){
+		const src = e.target,
+			 username = JSON.parse(sessionStorage.loginUser).name,
+			 bookid = $(src).parent().siblings(".bookId").html(),
+			 data = {name:username,level:0};
+		$.post("/api/find",data,(data)=>{
+			if(data.res_code === 1){
+				let book = data.res_body.data[0].book;
+				for(var index in book){
+					if(book[index].id === bookid){
+						book.splice(index,1);
+						book = JSON.stringify(book);
+						$.post("/api/update",{name:username,book:book,level:0},(data)=>{
+						//console.log(data);
+							if(data.res_code===1){
+								$.post("/api/book/find",{_id:bookid},(data)=>{
+									//var number = data.res_body.data[0].number;
+									console.log(data);
+								});
+
+
+
+
+
+
+
+
+								//归还成功
+								this.borrowDtails()
+								$(".update-success").html("归还图书成功");
+									$(".update-success").removeClass("hidden");
+									setTimeout(()=>{
+										$(".update-error").addClass("hidden");
+									},1500);
+							}else{
+								//还书失败
+								$(".update-error").html("归还图书失败");
+								$(".update-error").removeClass("hidden");
+								setTimeout(()=>{
+									$(".update-error").addClass("hidden");
+								},1500);
+							}
+						});
+					}
+				}
+			}else{
+				//还书失败
+				$(".update-error").html("归还图书失败");
+				$(".update-error").removeClass("hidden");
+				setTimeout(()=>{
+					$(".update-error").addClass("hidden");
+				},1500);
+			}
+		});
+	},
+	autoInput(){
+			let loginUser = JSON.parse(sessionStorage.loginUser);
+			//console.log(loginUser);
+			$(".update-form").find("input")[0].value = loginUser.name;
+			$(".update-form").find("input")[1].value = loginUser.sex;
+			$(".update-form").find("input")[2].value = loginUser.age;
+			$(".update-form").find("input")[3].value = loginUser.tel;
+	},
+	xxk(e){
+		const src = $(e.target).parent(); 
+		src.addClass("active").siblings().removeClass("active");
+		const index = src.index();
+		//console.log(index);
+		if(index===2) this.borrowDtails();
+		$(".box").eq(index).removeClass("hidden").siblings(".panel").addClass("hidden");
+	},
+	//借书详情列表
+	borrowDtails(){
+		const name = JSON.parse(sessionStorage.loginUser).name;
+		$.post("/api/find",{name,level:0},(data)=>{
+			if(data.res_code === 1){
+				const book = data.res_body.data[0].book;
+				let html = '';
+				for(var index in book){
+					html+=`<tr>
+								<td class="bookId">${book[index].id}</td>
+								<td>${book[index].bookname}</td>
+								<td>${book[index].borrow_time}</td>
+								<td><a class="returnBook" href="javascript:void">还书</a></td>
+							</tr>`;
+				}
+				$('.table-borrowBook tbody').html(html);
+			}
+		});
+	},
+	//修改密码操作
+	changePassword(){
+		const name = JSON.parse(sessionStorage.loginUser).name;
+		const data = $(".password-form").serialize()+"&level=0&name="+name;
+		//console.log(data);
+		const url="/api/update/";
+		$.post(url,data,(data)=>{
+			if(data.res_code===1){
+				// 修改成功
+				var html = $(".update-success").html()+",请重新登录";
+				$(".update-success").html(html);
+				$(".update-success").removeClass("hidden");
+				setTimeout(()=>{
+					$.get("/api/logout",(data)=>{
+						if(data.res_code===1){
+							sessionStorage.removeItem("loginUser");
+							// 刷新
+							window.location.href = "/";
+						}
+					});
+				},1500);
+			}else{
+				$(".update-error").removeClass("hidden");
+				setTimeout(()=>{
+					$(".update-error").addClass("hidden");
+				},1500);
+			}			
+		});
 	},
 	//加载图书页数
 	loadPage(){
@@ -125,7 +237,7 @@ $.extend(User.prototype,{
 				html+=`<tr>
  						<td class="id">${curr._id}</td>
 						<td><img src="${curr.cover}" with="60"  height="60"}></td>
-						<td>${curr.name}</td>
+						<td class="bookname">${curr.name}</td>
 						<td>${curr.type}</td>
 						<td class="number">${curr.number}</td>
 						<td>${curr.price}</td>
@@ -192,7 +304,7 @@ $.extend(User.prototype,{
 					html+=`<tr>
 	 						<td class="id">${curr._id}</td>
 							<td><img src="${curr.cover}" with="60"  height="60"}></td>
-							<td>${curr.name}</td>
+							<td class="bookname">${curr.name}</td>
 							<td>${curr.type}</td>
 							<td class="number">${curr.number}</td>
 							<td>${curr.price}</td>
@@ -224,6 +336,7 @@ $.extend(User.prototype,{
 		
 		//获取当前图书编码
 		var _id=$(this).parent().siblings(".id").html();
+		var bookname=$(this).parent().siblings(".bookname").html();
 		//获取当前图书数量
 		var number=$(this).parent().siblings(".number").html();
 		//console.log(number);
@@ -242,25 +355,63 @@ $.extend(User.prototype,{
 				},3000);
 		}
 		else number--;
-		//改变数据库图书数据
-		let url ="/api/book/update";
-		$.post(url,{_id,number},function(data){
-			console.log(data);
-			//location.reload();
-			//借阅标志改变
-			$(this).parent().siblings(".number").html(number);
-			if(lastNum!=0){
-				let alter=`<div class="alert alert-success alert-dismissible" role="alert" style="text-align:center">
-							  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							  <strong>借阅成功!</strong>
-							</div>`;
-				$(".allAlter").html(alter);
-				$(this).children("span").attr("class","glyphicon glyphicon-heart");
-				setTimeout(function() {
-					$(".allAlter").html("");
-				},3000);
+		//将借阅图书存入用户数据库
+		const username = JSON.parse(sessionStorage.loginUser).name;
+		$.post("/api/find",{name:username,level:0},(data)=>{
+			if (data.res_code === 1) {
+				var book = data.res_body.data[0].book;
+				for(var index in book){
+					if(book[index].id === _id){
+						$(".update-error").html("已借阅该图书，不可再次借阅！")
+						$(".update-error").removeClass("hidden");
+						// 修改失败
+						setTimeout(()=>{
+							$(".update-error").addClass("hidden");
+						},1500);
+							return ;
+					}
+				}
+				book.push({
+					id:_id,
+					bookname:bookname
+				});
+				book = JSON.stringify(book);
+				$.post("/api/update",{name:username,book:book,level:0},(data)=>{
+					//console.log(data);
+					if(data.res_code===1){
+						//改变用户的借书信息
+						//改变数据库图书数据
+						let url ="/api/book/update";
+						$.post(url,{_id,number},function(data){
+							if(data.res_code===1){
+								 sessionStorage.loginUser.book = JSON.parse(book);
+								// console.log(book);
+								 $(".update-success").html("借阅图书成功");
+								 $(".update-success").removeClass("hidden");
+								// 修改成功
+								setTimeout(()=>{
+									$(".update-success").addClass("hidden");
+								},1500);
+							}else{
+								$(".update-error").html("借阅图书失败");
+								$(".update-error").removeClass("hidden");
+								// 修改失败
+								setTimeout(()=>{
+									$(".update-error").addClass("hidden");
+								},1500);
+							}
+						});
+					}else{
+						$(".update-error").html("借阅图书失败");
+						$(".update-error").removeClass("hidden");
+						// 修改失败
+						setTimeout(()=>{
+							$(".update-error").addClass("hidden");
+						},1500);
+					}
+				});
 			}
-		}.bind(this));
+		});
 	}
 });
 

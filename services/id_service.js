@@ -24,7 +24,7 @@ const IdService = {
 				if(bcrypt.compareSync(password, user.password)){
 				// 将用户信息保存到 session 中
 				//req.session.loginUser = data;
-				res.json({res_code:1,res_error:"",res_body:{data:{name:user.name,age:user.age,sex:user.sex,tel:user.tel,reg_time:user.reg_time}}});	
+				res.json({res_code:1,res_error:"",res_body:{data:{name:user.name,age:user.age,sex:user.sex,tel:user.tel,reg_time:user.reg_time,book:user.book}}});	
 				}else{
 					res.json({res_code:0,res_error:"err",res_body:{}});
 				}				
@@ -60,6 +60,15 @@ const IdService = {
 				}else{
 					res.json({res_code:0,res_error:"err",res_body:{}});
 				}
+			})
+			.catch((err)=>{
+				res.json({res_code: 0, res_error: err, res_body: {}});
+			});
+		}else if(req.body.book){
+			var {name,book,level} = req.body;
+			IdDao.update({name},{book},level)
+			.then((data)=>{
+				res.json({res_code:1,res_error:"",res_body:{data:data}});
 			})
 			.catch((err)=>{
 				res.json({res_code: 0, res_error: err, res_body: {}});
