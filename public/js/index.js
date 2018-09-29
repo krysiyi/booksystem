@@ -6,6 +6,7 @@ function Index(){
 
 $.extend(Index.prototype,{
 	addListener(){
+		$(".login-btn").attr("disabled","disabled");
 		$(".login-btn").on("click",this.login);
 		//点击验证码刷新验证码	
 		$(".captcha").on("click",this.load);
@@ -44,10 +45,14 @@ $.extend(Index.prototype,{
 	//验证验证码
 	verify(){
 		$.getJSON("/api/verifycaptcha",{captcha:$(this).val()},(data)=>{
-			if(data.res_body.valid===false)
+			if(data.res_body.valid===false){
 				$("#result").html("错误");
-			else
+				$(".login-btn").attr("disabled","disabled");
+			}
+			else{
 				$("#result").html("正确");
+				$(".login-btn").removeAttr("disabled");
+			}	
 		});
 	},
 });
