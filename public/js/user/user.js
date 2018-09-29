@@ -221,8 +221,7 @@ $.extend(User.prototype,{
 	},
 	//借书
 	borrowBook(){
-		//借阅标志改变
-		$(this).children("span").attr("class","glyphicon glyphicon-heart");
+		
 		//获取当前图书编码
 		var _id=$(this).parent().siblings(".id").html();
 		//获取当前图书数量
@@ -248,6 +247,7 @@ $.extend(User.prototype,{
 		$.post(url,{_id,number},function(data){
 			console.log(data);
 			//location.reload();
+			//借阅标志改变
 			$(this).parent().siblings(".number").html(number);
 			if(lastNum!=0){
 				let alter=`<div class="alert alert-success alert-dismissible" role="alert" style="text-align:center">
@@ -255,6 +255,7 @@ $.extend(User.prototype,{
 							  <strong>借阅成功!</strong>
 							</div>`;
 				$(".allAlter").html(alter);
+				$(this).children("span").attr("class","glyphicon glyphicon-heart");
 				setTimeout(function() {
 					$(".allAlter").html("");
 				},3000);
