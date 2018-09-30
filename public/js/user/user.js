@@ -104,7 +104,7 @@ $.extend(User.prototype,{
 						console.log(data);
 							if(data.res_code===1){
 								$.post("/api/book/find",{_id:bookid},(data)=>{
-									console.log(data);
+									//console.log(data);
 									var number = ++data.res_body.data[0].number;
 									$.post("/api/book/update",{_id:bookid,number},(data)=>{
 										if(data.res_code===1){
@@ -186,32 +186,43 @@ $.extend(User.prototype,{
 	},
 	//修改密码操作
 	changePassword(){
-		const name = JSON.parse(sessionStorage.loginUser).name;
-		const data = $(".password-form").serialize()+"&level=0&name="+name;
-		//console.log(data);
-		const url="/api/update/";
-		$.post(url,data,(data)=>{
-			if(data.res_code===1){
-				// 修改成功
-				var html = $(".update-success").html()+",请重新登录";
-				$(".update-success").html(html);
-				$(".update-success").removeClass("hidden");
-				setTimeout(()=>{
-					$.get("/api/logout",(data)=>{
-						if(data.res_code===1){
-							sessionStorage.removeItem("loginUser");
-							// 刷新
-							window.location.href = "/";
-						}
-					});
-				},1500);
-			}else{
-				$(".update-error").removeClass("hidden");
-				setTimeout(()=>{
-					$(".update-error").addClass("hidden");
-				},1500);
-			}			
-		});
+		//获取两次输入的密码，判断是否一致
+		var newPwd=$("#newPwd").val();
+		if($("#againNewPwd").val()===newPwd){
+			const name = JSON.parse(sessionStorage.loginUser).name;
+			const data = $(".password-form").serialize()+"&level=0&name="+name;
+			//console.log(data);
+			const url="/api/update/";
+			$.post(url,data,(data)=>{
+				if(data.res_code===1){
+					// 修改成功
+					$(".update-success").html("修改密码成功,请重新登录");
+					$(".update-success").removeClass("hidden");
+					setTimeout(()=>{
+						$.get("/api/logout",(data)=>{
+							if(data.res_code===1){
+								sessionStorage.removeItem("loginUser");
+								// 刷新
+								window.location.href = "/";
+							}
+						});
+					},1500);
+				}else{
+					$(".update-error").html("原密码错误，请重新尝试");
+					$(".update-error").removeClass("hidden");
+					setTimeout(()=>{
+						$(".update-error").addClass("hidden");
+					},1500);
+				}	
+			});
+		}else{
+			$(".update-error").html('两次密码输入不一致');
+			$(".update-error").removeClass("hidden");
+			setTimeout(()=>{
+				$(".update-error").addClass("hidden");
+			},1500);
+		}
+		
 	},
 	//加载图书页数
 	loadPage(){

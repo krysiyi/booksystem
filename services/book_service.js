@@ -71,16 +71,21 @@ const BookService = {
 	},
 	// 按条件查找图书
 	find(req, res, next) {
-		if({_id}=req.body){
+		//console.log(req.body.info);
+		var {_id}=req.body;
+		if(_id){
 			var obj={_id};
 		}else{
 			// 获取查询的页码
 			const {type,info} = req.body;
 			// 查询条件 模糊查询
 			var obj={}
+			//console.log(info);
 			obj[type]=new RegExp(info,"i");
 			//console.log(query);
+			
 		}
+		//console.log(obj);
 		BookDao.find(obj)
 					.then((data)=>{
 						console.log(data);

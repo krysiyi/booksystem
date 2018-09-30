@@ -412,10 +412,11 @@ $.extend(Book.prototype,{
 		var obj={};
 		obj.info=value;
 		obj.type=key;
+		
 		//console.log(obj);
 		let url ="/api/book/find";
 		$.post(url,obj,(data)=>{
-			console.log(data);
+			//console.log(data);
 			//获取查询后的数据渲染页面
 			if(data.res_body.data.length){
 				var html="";
