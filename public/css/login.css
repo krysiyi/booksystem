@@ -1,4 +1,6 @@
-html{height: 100%}
+html{height: 100%;
+	min-height: 1000px;
+	min-width: 1200px;}
 body{
 	height: 100%;
 	background: url(/images/login.jpg) center top;

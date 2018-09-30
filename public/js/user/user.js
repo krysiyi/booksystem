@@ -32,11 +32,7 @@ $.extend(User.prototype,{
 			if(data.res_code===1){
 				this.find({name});
 			}else{
-				$(".update-error").removeClass("hidden");
-				// 修改失败
-				setTimeout(()=>{
-					$(".update-error").addClass("hidden");
-				},1500);
+				this.error("修改信息失败");
 			}
 			
 		})
@@ -53,12 +49,23 @@ $.extend(User.prototype,{
 				//刷新页面
 				this.loadInfo();
 				// 修改成功
-				$(".update-success").removeClass("hidden");
-				setTimeout(()=>{
-					$(".update-success").addClass("hidden");
-				},1500);
+				this.success("修改信息成功");
 			}
 		});
+	},
+	success(text){
+		$(".update-success").html(text);
+		$(".update-success").removeClass("hidden");
+		setTimeout(()=>{
+			$(".update-success").addClass("hidden");
+		},1500);
+	},
+	error(text){
+		$(".update-error").html(text);
+		$(".update-error").removeClass("hidden");
+		setTimeout(()=>{
+			$(".update-error").addClass("hidden");
+		},1500);
 	},
 	addListener(){
 		//选项卡点击
@@ -76,13 +83,13 @@ $.extend(User.prototype,{
 		//搜索类型
 		$(".chooseType").on("click","a",this.chooseType);
 		//搜索
-		$(".find").on("click",this.findBook);
+		$(".find").on("click",this.findBook.bind(this));
 		//重新加载全部图书信息
 		$(".reload").on("click",this.init.bind(this));
 		//借阅图书相关事件
-		$(".book-table tbody").on("click",".borrow",this.borrowBook);
+		$(".book-table tbody").on("click",".borrow",this.borrowBook.bind(this));
 		//修改密码
-		$(".password-btn").on("click",this.changePassword);
+		$(".password-btn").on("click",this.changePassword.bind(this));
 		//还书按钮
 		$(".table-borrowBook").on("click",".returnBook",this.returnBook.bind(this));
 	},
@@ -101,7 +108,7 @@ $.extend(User.prototype,{
 						//console.log(book);
 						$.post("/api/update",{name:username,book:book,level:0},(data)=>{
 							
-						console.log(data);
+						//console.log(data);
 							if(data.res_code===1){
 								$.post("/api/book/find",{_id:bookid},(data)=>{
 									//console.log(data);
@@ -110,40 +117,23 @@ $.extend(User.prototype,{
 										if(data.res_code===1){
 											//归还成功
 											this.borrowDtails()
-											$(".update-success").html("归还图书成功");
-											$(".update-success").removeClass("hidden");
-											setTimeout(()=>{
-												$(".update-error").addClass("hidden");
-											},1500);
+											this.success("归还图书成功");
 										}else{
 											//还书失败
-											$(".update-error").html("归还图书失败");
-											$(".update-error").removeClass("hidden");
-											setTimeout(()=>{
-												$(".update-error").addClass("hidden");
-											},1500);
+											this.error("归还图书失败");
 										}
 									})
-
 								});	
 							}else{
 								//还书失败
-								$(".update-error").html("归还图书失败");
-								$(".update-error").removeClass("hidden");
-								setTimeout(()=>{
-									$(".update-error").addClass("hidden");
-								},1500);
+								this.error("归还图书失败");
 							}
 						});
 					}
 				}
 			}else{
 				//还书失败
-				$(".update-error").html("归还图书失败");
-				$(".update-error").removeClass("hidden");
-				setTimeout(()=>{
-					$(".update-error").addClass("hidden");
-				},1500);
+				this.error("归还图书失败");
 			}
 		});
 	},
@@ -196,8 +186,7 @@ $.extend(User.prototype,{
 			$.post(url,data,(data)=>{
 				if(data.res_code===1){
 					// 修改成功
-					$(".update-success").html("修改密码成功,请重新登录");
-					$(".update-success").removeClass("hidden");
+					this.success("修改密码成功,请重新登录");
 					setTimeout(()=>{
 						$.get("/api/logout",(data)=>{
 							if(data.res_code===1){
@@ -208,19 +197,11 @@ $.extend(User.prototype,{
 						});
 					},1500);
 				}else{
-					$(".update-error").html("原密码错误，请重新尝试");
-					$(".update-error").removeClass("hidden");
-					setTimeout(()=>{
-						$(".update-error").addClass("hidden");
-					},1500);
+					this.error("原密码错误，请重新尝试");
 				}	
 			});
 		}else{
-			$(".update-error").html('两次密码输入不一致');
-			$(".update-error").removeClass("hidden");
-			setTimeout(()=>{
-				$(".update-error").addClass("hidden");
-			},1500);
+			this.error("两次输入密码不一致");
 		}
 		
 	},
@@ -338,41 +319,28 @@ $.extend(User.prototype,{
 				});
 			}else{
 				//alert("搜索不存在");
-				let alter=`<div class="alert alert-warning alert-dismissible" role="alert" style="text-align:center">
-							  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							  <strong>搜索不存在!</strong> 请重新输入
-							</div>`;
-				$(".allAlter").html(alter);
-				setTimeout(function() {
-					$(".allAlter").html("");
-				},3000);
+				this.error("搜索不存在");
 				
 			}
 		});
 	},
 	//借书
-	borrowBook(){
+	borrowBook(e){
 		
 		//获取当前图书编码
-		var _id=$(this).parent().siblings(".id").html();
+		const src = e.target;
+		var _id=$(src).parent().siblings(".id").html();
 		const _this = this;
-		var bookname=$(this).parent().siblings(".bookname").html();
+		var bookname=$(src).parent().siblings(".bookname").html();
 		//获取当前图书数量
-		var number=$(this).parent().siblings(".number").html();
+		var number=$(src).parent().siblings(".number").html();
 		//console.log(number);
 		//记录修改前的图书
 		var lastNum=number;
 		//图书数量减少一个
 		if(number<1) {
 			number=0;
-			let alter=`<div class="alert alert-warning alert-dismissible" role="alert" style="text-align:center">
-							  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							  <strong>该书库存数量不足!</strong> 请选择其他图书
-							</div>`;
-				$(".allAlter").html(alter);
-				setTimeout(function() {
-					$(".allAlter").html("");
-				},3000);
+			this.error("该书库存数量不足，请借阅其他图书");
 		}
 		else number--;
 		//将借阅图书存入用户数据库
@@ -382,12 +350,7 @@ $.extend(User.prototype,{
 				var book = data.res_body.data[0].book;
 				for(var index in book){
 					if(book[index].id === _id){
-						$(".update-error").html("已借阅该图书，不可再次借阅！")
-						$(".update-error").removeClass("hidden");
-						// 修改失败
-						setTimeout(()=>{
-							$(".update-error").addClass("hidden");
-						},1500);
+						_this.error("已借阅该图书，不可再次借阅！");
 							return ;
 					}
 					
@@ -405,31 +368,16 @@ $.extend(User.prototype,{
 						let url ="/api/book/update";
 						$.post(url,{_id,number},function(data){
 							if(data.res_code===1){
-								$(_this).parent().siblings(".number").html(number);
+								$(src).parent().siblings(".number").html(number);
 								 sessionStorage.loginUser.book = JSON.parse(book);
 								// console.log(book);
-								 $(".update-success").html("借阅图书成功");
-								 $(".update-success").removeClass("hidden");
-								// 修改成功
-								setTimeout(()=>{
-									$(".update-success").addClass("hidden");
-								},1500);
+								 _this.success("借阅图书成功");
 							}else{
-								$(".update-error").html("借阅图书失败");
-								$(".update-error").removeClass("hidden");
-								// 修改失败
-								setTimeout(()=>{
-									$(".update-error").addClass("hidden");
-								},1500);
+								_this.error("借阅图书失败");
 							}
 						});
 					}else{
-						$(".update-error").html("借阅图书失败");
-						$(".update-error").removeClass("hidden");
-						// 修改失败
-						setTimeout(()=>{
-							$(".update-error").addClass("hidden");
-						},1500);
+						_this.error("借阅图书失败");
 					}
 				});
 			}

@@ -1,7 +1,7 @@
 function Index(){
-	this.addListener();
-	this.load();
 	this.reg();
+	this.addListener();
+	this.load();		
 };
 
 $.extend(Index.prototype,{
@@ -9,9 +9,11 @@ $.extend(Index.prototype,{
 		$(".login-btn").attr("disabled","disabled");
 		$(".login-btn").on("click",this.login);
 		//点击验证码刷新验证码	
-		$(".recaptcha").on("click",this.load);
+		$(".captcha").on("click",this.load);
 		//失去焦点验证是否正确
-		$(".captcha-input").on("blur",this.verify);
+		$(".captcha-input").on("keyup",this.verify);
+		$(".close").on("click",this.load);
+		$(".close").on("click",this.verify);
 	},
 	login(){
 		const url = "/api/login"
@@ -54,7 +56,7 @@ $.extend(Index.prototype,{
 				$(".login-btn").removeAttr("disabled");
 			}	
 		});
-	},
+	}
 });
 
 new Index();

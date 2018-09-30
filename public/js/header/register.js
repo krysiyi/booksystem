@@ -1,6 +1,5 @@
 function Register(){
 	this.creatDom();
-	this.load();
 	this.addListener()
 };
 
@@ -8,7 +7,7 @@ Register.template = `<div class="modal fade" id="RegModal" tabindex="-1" role="d
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="close">&times;</span></button>
 	        <h4 class="modal-title">用户注册</h4>
 	      </div>
 	      <div class="modal-body">
@@ -20,11 +19,11 @@ Register.template = `<div class="modal fade" id="RegModal" tabindex="-1" role="d
 			  </div>
 			  <div class="form-group">
 			    <label for="exampleInputPassword1">密码</label>
-			    <input type="password" class="form-control" name="password" placeholder="输入密码">
+			    <input type="password" class="form-control password" name="password" placeholder="输入密码">
 			  </div>
 			  <div class="form-group">
-			    <label for="exampleInputPassword1">确认密码</label>
-			    <input type="password" class="form-control" id="repassword" placeholder="再次输入密码">
+			    <label for="exampleInputPassword1">确认密码</label><span class="prompt hidden" style="color:red;">*两次输入密码不一致</span>
+			    <input type="password" class="form-control repassword" placeholder="再次输入密码">
 			  </div>
 			  <div class="form-group">
 			    <label for="exampleInputEmail1">性别</label>
@@ -42,10 +41,10 @@ Register.template = `<div class="modal fade" id="RegModal" tabindex="-1" role="d
 			<div class="form-group">
 			    <label for="loginCaptcha">验证码</label>
 			    <div class="input-group">
-			      <input type="text" class="form-control captcha-input"placeholder="请输入验证码">
-				  <span class="input-group-addon" id="result">正确</span>
+			      <input type="text" class="form-control captcha-register"placeholder="请输入验证码">
+				  <span class="input-group-addon register-result">未输入验证码</span>
 				</div>
-				<div class="captcha"></div>
+				<div class="captcha2"></div>
 			</div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-primary register-btn">注册</button>
@@ -60,24 +59,51 @@ $.extend(Register.prototype,{
 	},
 	//载入验证码
 	load(){
-		/*$.getJSON("/api/captcha",(data)=>{
-			$(".captcha").html(data.res_body.data);
-		});*/
+		$.getJSON("/api/captcha",(data)=>{
+			$(".captcha2").html(data.res_body.data);
+		});
+	},
+	//验证验证码
+	verify(){
+		$.getJSON("/api/verifycaptcha",{captcha:$(this).val()},(data)=>{
+			if(data.res_body.valid===false){
+				$(".register-result").html("错误");
+				$("register-btn").attr("disabled","disabled");
+			}
+			else{
+				$(".register-result").html("正确");
+				$("register-btn").removeAttr("disabled");
+			}	
+		});
 	},
 	//添加监听
 	addListener(){
+		//第二次输入密码是否一致
+		$(".repassword").on("blur",this.check);
 		//注册按钮点击
 		$(".register-btn").on("click",this.regHandler);
 		//点击验证码刷新验证码	
-		$(".captcha").on("click",this.load);
+		$(".captcha2").on("click",this.load);
 		//失去焦点验证是否正确
-		//$(".captcha-input").on("blur",this.verify);
+		$(".captcha-register").on("keyup",this.verify);
+		$(".register").on("click",this.load);
+	},
+	check(){
+		const password = $(".password").val();
+		const repassword = $(this).val();
+		if(password!=repassword){
+			$(".prompt").removeClass("hidden");
+			$(".register-btn").attr("disabled","disabled");
+		}else{
+			$(".prompt").addClass("hidden");
+			$(".register-btn").removeAttr("disabled");
+		}
 	},
 	regHandler(){
 		const url="/api/register",
 			data = $(".register-form").serialize() + "&level=0";
 		$.post(url,data,(data)=>{
-			console.log(data);
+			//console.log(data);
 			// 处理响应数据
 			if (data.res_code === 1) { // 注册成功，即登录成功
 				// 将注册成功的用户信息保存到 sessionStorage 中

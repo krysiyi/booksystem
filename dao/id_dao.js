@@ -23,6 +23,7 @@ const IdDao = {
 			if(info.book.length===0)
 			return User.update(condition,{book:[]});
 			const index = info.book.length-1;
+			if(!info.book[index].borrow_time)
 			info.book[index].borrow_time = new Date();
 		}
 		if(level==0){//判断是否为普通用户更新
