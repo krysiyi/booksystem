@@ -2,10 +2,11 @@ function Header(){
 	this.createDom();
 	this.isLogin();
 	this.addListener();
+	this.time();
 };
 
 //头部模板
-Header.template=`<nav class="navbar navbar-inverse" >
+Header.template=`<nav class="navbar navbar-inverse" style="margin-bottom:10px !important;">
 	  <div class="container-fluid">
 	    <div class="navbar-header">
 	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -30,7 +31,9 @@ Header.template=`<nav class="navbar navbar-inverse" >
 	      </ul>
 	    </div><!-- /.navbar-collapse -->
 	  </div><!-- /.container-fluid -->
-	</nav>`;
+	</nav>
+	<div class="time"></div>
+	`;
 
 $.extend(Header.prototype,{
 	//创建头部
@@ -59,6 +62,9 @@ $.extend(Header.prototype,{
 	},
 	addListener(){
 		$(".logout-link").on("click",this.logout);
+	},
+	time(){
+		new Time();
 	}
 });
 
