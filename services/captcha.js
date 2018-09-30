@@ -14,6 +14,7 @@ const Captcha = {
 	},
 	verifyCaptcha(req,res,next){
 		const {captcha} = req.query;//获取输入的验证码
+		console.log(captcha.toUpperCase() === req.session.captcha.toUpperCase());
 		if(captcha.toUpperCase() === req.session.captcha.toUpperCase())
 			res.json({res_code:1, res_error:"", res_body: {valid: true}});
 		else

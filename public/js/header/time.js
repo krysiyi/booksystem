@@ -25,8 +25,8 @@ $.extend(Time.prototype,{
 		this.mon = this.date.getMonth();
 		this.day = this.date.getDate();
 		this.week = this.getWeek(this.date.getDay());
-		this.hour = this.date.getHours();
-		this.min = this.date.getMinutes();
+		this.hour = this.date.getHours<10?"0"+this.date.getHours():this.date.getHours();
+		this.min = this.date.getMinutes<10?"0"+this.date.getMinutes():this.date.getMinutes();
 		this.second = this.date.getSeconds()<10?"0"+this.date.getSeconds():this.date.getSeconds();
 		//console.log(this.week);
 	},

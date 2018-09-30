@@ -47,13 +47,14 @@ Register.template = `<div class="modal fade" id="RegModal" tabindex="-1" role="d
 				<div class="captcha2"></div>
 			</div>
 	      <div class="modal-footer">
-	        <button type="button" class="btn btn-primary register-btn">注册</button>
+	        <button type="button" class="btn btn-primary register-btn" disabled="disabled">注册</button>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->`;
 
 $.extend(Register.prototype,{
+	flag:[false,false],
 	creatDom(){
 		$(Register.template).appendTo("body");
 	},
@@ -65,39 +66,53 @@ $.extend(Register.prototype,{
 	},
 	//验证验证码
 	verify(){
-		$.getJSON("/api/verifycaptcha",{captcha:$(this).val()},(data)=>{
+		console.log($(".captcha-register").val());
+		$.getJSON("/api/verifycaptcha",{captcha:$(".captcha-register").val()},(data)=>{
 			if(data.res_body.valid===false){
 				$(".register-result").html("错误");
-				$("register-btn").attr("disabled","disabled");
+				this.flag[0]=false;
+				//$(".register-btn").attr("disabled","disabled");	
 			}
 			else{
 				$(".register-result").html("正确");
-				$("register-btn").removeAttr("disabled");
-			}	
+				this.flag[0]= true;
+				//$(".register-btn").removeAttr("disabled");
+			}
+			if(this.flag.every((value)=>{return value}))
+			$(".register-btn").removeAttr("disabled");
+			else
+			$(".register-btn").attr("disabled","disabled");
 		});
 	},
 	//添加监听
 	addListener(){
 		//第二次输入密码是否一致
-		$(".repassword").on("blur",this.check);
+		$(".repassword").on("blur",this.check.bind(this));
 		//注册按钮点击
 		$(".register-btn").on("click",this.regHandler);
 		//点击验证码刷新验证码	
 		$(".captcha2").on("click",this.load);
 		//失去焦点验证是否正确
-		$(".captcha-register").on("keyup",this.verify);
+		$(".captcha-register").on("keyup",this.verify.bind(this));
 		$(".register").on("click",this.load);
 	},
-	check(){
+	check(e){
 		const password = $(".password").val();
-		const repassword = $(this).val();
+		const repassword = $(e.target).val();
 		if(password!=repassword){
 			$(".prompt").removeClass("hidden");
-			$(".register-btn").attr("disabled","disabled");
+			//$(".register-btn").attr("disabled","disabled");
+			this.flag[1]=false;
 		}else{
-			$(".prompt").addClass("hidden");
-			$(".register-btn").removeAttr("disabled");
+				$(".prompt").addClass("hidden");
+				this.flag[1]=true;
+				//$(".register-btn").removeAttr("disabled");
 		}
+		//console.log(this.flag);
+		if(this.flag.every((value)=>{return value}))
+		$(".register-btn").removeAttr("disabled");
+		else
+		$(".register-btn").attr("disabled","disabled");
 	},
 	regHandler(){
 		const url="/api/register",
